@@ -1,0 +1,21 @@
+@font-face {
+    font-family: 'GeometryDash';
+    src: url('Letras.otf') format('opentype');
+}
+
+
+
+
+*{
+    text-decoration: none;
+    font-family: GeometryDash;
+}
+                             
+
+                
+
+.title{
+    text-align: center;
+    padding: 10px;
+    background-color: #7de9ff;
+}
