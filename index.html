@@ -1,16 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game</title>
+    <title>Super Platformer - Inicio</title>
     <link rel="stylesheet" href="style.css">
-    <link href = " https://fonts.cdnfonts.com/css/pusab " rel = "stylesheet">
-                
+    <!-- Fuente tipo gaming -->
+    <link href="https://fonts.cdnfonts.com/css/pusab" rel="stylesheet">
 </head>
 <body>
-  <h1 class="title">hola wenas</h1>  
-  <br>
-  <a href="selector.html" class="PlayButton">Play</a>
+    <!-- Capa para el efecto de brillo/partículas de fondo -->
+    <div class="overlay"></div>
+
+    <main class="menu-container">
+        <header>
+            <h1 class="title">SUPER ADVENTURE</h1>
+            <p class="subtitle">Presiona Play para comenzar</p>
+        </header>
+
+        <nav class="menu-options">
+            <a href="selector.html" class="btn play-btn">PLAY</a>
+            <div class="secondary-btns">
+                <a href="#" class="btn small-btn">OPCIONES</a>
+                <a href="#" class="btn small-btn">CRÉDITOS</a>
+            </div>
+        </nav>
+    </main>
+
+    <footer class="footer">
+        v1.0.2 - Creado por TuNombre
+    </footer>
 </body>
 </html>
