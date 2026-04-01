@@ -122,3 +122,9 @@ body {
     font-size: 0.7rem;
     opacity: 0.6;
 }
+
+.Ops{
+    text-align: center;
+    color: #0000;
+    background-color: black;
+}
