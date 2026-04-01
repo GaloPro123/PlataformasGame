@@ -142,11 +142,15 @@ body {
 
 .niveles div{
     padding: 10px;
-    background: #23d5ab;
+    background: yellow;
     border-radius: 10px;
     display: block;
 }
 
 .niveles div a{
     color: lightcyan;
+}
+
+.main{
+    display: block;
 }
