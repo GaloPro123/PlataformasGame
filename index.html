@@ -10,10 +10,11 @@
 </head>
 <body>
     <!-- Capa para el efecto de brillo/partículas de fondo -->
-    <audio src="Intro.mp3" autoplay loop></audio>
+    
 
 
     <div class="overlay"></div>
+    <audio id="miAudio" src="Intro.mp3" loop></audio>
 
     <main class="menu-container">
         <header>
@@ -33,5 +34,16 @@
     <footer class="footer">
         v1.0.2 - Creado por GaloPro123. (Desarrollador, Oliver).
     </footer>
+    <script>
+  // Escuchamos el primer clic en cualquier parte del documento
+  document.addEventListener('click', function() {
+    var audio = document.getElementById("miAudio");
+    
+    // Intentamos reproducir el audio
+    audio.play().catch(function(error) {
+      console.log("El navegador bloqueó el autoplay inicialmente:", error);
+    });
+  }, { once: true }); // '{ once: true }' hace que el evento solo se ejecute la primera vez
+</script>
 </body>
 </html>
