@@ -63,16 +63,17 @@
         let score = 0;
         let gameOver = false;
         let won = false;
+        let redirectTimeout = null;
 
-        // Plataformas (x, y, width, height)
+        // Plataformas
         let platforms = [
-            {x: 0, y: 450, w: 1200, h: 50},   // suelo principal
+            {x: 0, y: 450, w: 1200, h: 50},
             {x: 200, y: 350, w: 150, h: 20},
             {x: 450, y: 280, w: 200, h: 20},
             {x: 750, y: 380, w: 100, h: 20},
             {x: 950, y: 220, w: 150, h: 20},
             {x: 1200, y: 300, w: 100, h: 20},
-            {x: 1450, y: 400, w: 300, h: 50}  // plataforma final
+            {x: 1450, y: 400, w: 300, h: 50}
         ];
 
         // Plataforma móvil
@@ -87,7 +88,7 @@
             {x: 1300, y: 340, r: 10, collected: false}
         ];
 
-        // Enemigo simple
+        // Enemigo
         let enemy = {
             x: 600,
             y: 410,
@@ -110,20 +111,18 @@
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Fondo oscuro con atmósfera de "The Hall"
             ctx.fillStyle = '#1a0f1f';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Suelo lejano (decorativo)
             ctx.fillStyle = '#2a1a2f';
             ctx.fillRect(0, 420, canvas.width, 80);
 
-            // Dibujar plataformas
+            // Plataformas
             ctx.fillStyle = '#555';
             platforms.forEach(p => {
                 ctx.fillRect(p.x - cameraX, p.y, p.w, p.h);
                 ctx.fillStyle = '#777';
-                ctx.fillRect(p.x - cameraX, p.y, p.w, 8); // borde superior
+                ctx.fillRect(p.x - cameraX, p.y, p.w, 8);
                 ctx.fillStyle = '#555';
             });
 
@@ -150,56 +149,60 @@
                 ctx.fillStyle = '#900';
                 ctx.fillRect(enemy.x - cameraX, enemy.y, enemy.width, enemy.height);
                 ctx.fillStyle = '#f00';
-                ctx.fillRect(enemy.x - cameraX + 8, enemy.y + 10, 14, 10); // ojos
+                ctx.fillRect(enemy.x - cameraX + 8, enemy.y + 10, 14, 10);
             }
 
-            // Meta (bandera)
+            // Meta
             ctx.fillStyle = '#0a0';
             ctx.fillRect(goal.x - cameraX, goal.y, goal.w, goal.h);
             ctx.fillStyle = '#0f0';
-            ctx.fillRect(goal.x - cameraX, goal.y, 40, 30); // bandera
+            ctx.fillRect(goal.x - cameraX, goal.y, 40, 30);
 
-            // Jugador (estilo simple pero con toque oscuro)
+            // Jugador
             ctx.fillStyle = '#0af';
             ctx.fillRect(player.x - cameraX, player.y, player.width, player.height);
-            // "cabeza"
             ctx.fillStyle = '#fff';
             ctx.fillRect(player.x - cameraX + 8, player.y + 8, 14, 12);
 
-            // Texto de victoria o game over
+            // Mensajes finales
             if (won) {
-                ctx.fillStyle = 'rgba(0,255,0,0.8)';
+                ctx.fillStyle = 'rgba(0,255,0,0.85)';
                 ctx.font = '40px Arial';
-                ctx.fillText('¡NIVEL COMPLETO!', 180, 220);
+                ctx.textAlign = 'center';
+                ctx.fillText('¡NIVEL COMPLETO!', canvas.width/2, 200);
+                ctx.font = '20px Arial';
+                ctx.fillText('Redirigiendo...', canvas.width/2, 250);
             }
+
             if (gameOver) {
-                ctx.fillStyle = 'rgba(255,0,0,0.8)';
+                ctx.fillStyle = 'rgba(255,0,0,0.85)';
                 ctx.font = '40px Arial';
-                ctx.fillText('GAME OVER', 220, 220);
+                ctx.textAlign = 'center';
+                ctx.fillText('GAME OVER', canvas.width/2, 220);
+                ctx.font = '20px Arial';
+                ctx.fillText('Presiona R para reiniciar', canvas.width/2, 270);
             }
         }
 
         function update() {
             if (gameOver || won) return;
 
-            // Movimiento horizontal
             if (keys['ArrowLeft'] || keys['a']) player.velX = -player.speed;
             else if (keys['ArrowRight'] || keys['d']) player.velX = player.speed;
             else player.velX *= friction;
 
-            // Salto
             if ((keys[' '] || keys['ArrowUp'] || keys['w']) && player.grounded) {
                 player.velY = player.jump;
                 player.grounded = false;
             }
 
-            // Aplicar gravedad
             player.velY += gravity;
             player.x += player.velX;
             player.y += player.velY;
 
-            // Colisión con plataformas
             player.grounded = false;
+
+            // Colisiones con plataformas
             platforms.forEach(p => {
                 if (
                     player.x < p.x + p.w &&
@@ -207,16 +210,10 @@
                     player.y < p.y + p.h &&
                     player.y + player.height > p.y
                 ) {
-                    // Colisión desde arriba
                     if (player.velY > 0 && player.y + player.height - player.velY <= p.y) {
                         player.y = p.y - player.height;
                         player.velY = 0;
                         player.grounded = true;
-                    }
-                    // Colisión desde abajo (opcional)
-                    else if (player.velY < 0 && player.y - player.velY >= p.y + p.h) {
-                        player.y = p.y + p.h;
-                        player.velY = 0;
                     }
                 }
             });
@@ -226,26 +223,27 @@
                 player.x < movingPlatform.x + movingPlatform.w &&
                 player.x + player.width > movingPlatform.x &&
                 player.y < movingPlatform.y + movingPlatform.h &&
-                player.y + player.height > movingPlatform.y
+                player.y + player.height > movingPlatform.y &&
+                player.velY > 0
             ) {
-                if (player.velY > 0 && player.y + player.height - player.velY <= movingPlatform.y) {
+                if (player.y + player.height - player.velY <= movingPlatform.y) {
                     player.y = movingPlatform.y - player.height;
                     player.velY = 0;
                     player.grounded = true;
-                    player.x += movingPlatform.speed * movingPlatform.dir * 0.5; // se mueve con la plataforma
+                    player.x += movingPlatform.speed * movingPlatform.dir * 0.4;
                 }
             }
 
-            // Actualizar plataforma móvil
+            // Plataforma móvil
             movingPlatform.y += movingPlatform.speed * movingPlatform.dir;
             if (movingPlatform.y <= 100 || movingPlatform.y >= 300) movingPlatform.dir *= -1;
 
-            // Colisión con monedas
+            // Monedas
             coins.forEach(coin => {
                 if (!coin.collected) {
                     let dx = (player.x + player.width/2) - coin.x;
                     let dy = (player.y + player.height/2) - coin.y;
-                    if (dx*dx + dy*dy < (player.width/2 + coin.r)**2) {
+                    if (dx*dx + dy*dy < (20)**2) {
                         coin.collected = true;
                         score += 100;
                         scoreEl.textContent = score;
@@ -253,8 +251,11 @@
                 }
             });
 
-            // Colisión con enemigo
+            // Enemigo
             if (enemy.alive) {
+                enemy.x += enemy.velX;
+                if (enemy.x <= 550 || enemy.x >= 850) enemy.velX *= -1;
+
                 if (
                     player.x < enemy.x + enemy.width &&
                     player.x + player.width > enemy.x &&
@@ -263,13 +264,9 @@
                 ) {
                     gameOver = true;
                 }
-
-                // Movimiento enemigo
-                enemy.x += enemy.velX;
-                if (enemy.x <= 550 || enemy.x >= 850) enemy.velX *= -1;
             }
 
-            // Colisión con meta
+            // Llegar a la meta → Ganar
             if (
                 player.x + player.width > goal.x &&
                 player.x < goal.x + goal.w &&
@@ -277,15 +274,18 @@
                 player.y < goal.y + goal.h
             ) {
                 won = true;
+                
+                // Redirección automática después de 2 segundos
+                redirectTimeout = setTimeout(() => {
+                    window.location.href = "index.html";   // ← Cambia esta URL si quieres
+                }, 2000);
             }
 
-            // Límites del mapa
             if (player.y > 600) gameOver = true;
             if (player.x < 0) player.x = 0;
 
-            // Cámara sigue al jugador
             cameraX = Math.max(0, player.x - 300);
-            if (cameraX > 1400) cameraX = 1400; // límite derecho aproximado
+            if (cameraX > 1450) cameraX = 1450;
         }
 
         function gameLoop() {
@@ -296,7 +296,8 @@
 
         // Reiniciar con R
         window.addEventListener('keydown', e => {
-            if ((gameOver || won) && e.key === 'r') {
+            if ((gameOver || won) && e.key.toLowerCase() === 'r') {
+                if (redirectTimeout) clearTimeout(redirectTimeout);
                 location.reload();
             }
         });
@@ -304,10 +305,9 @@
         gameLoop();
     </script>
 
-    <p style="margin-top:10px; color:#666;">
-        Controles: ← → mover | Espacio saltar<br>
-        Recoge las estrellas ★ | Llega a la bandera verde | ¡Evita el enemigo rojo!<br>
-        Presiona <strong>R</strong> para reiniciar al morir o ganar.
+    <p style="margin-top:15px; color:#666; font-size:14px;">
+        ← → mover | Espacio = saltar | Recoge las ★ | Llega a la bandera verde<br>
+        <strong>Al completar el nivel se redirigirá automáticamente</strong>
     </p>
 </body>
 </html>
