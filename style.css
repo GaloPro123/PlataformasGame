@@ -158,10 +158,9 @@ body {
     justify-self: center;
 }
 
-.the_hall_title{
-    padding: 10%;
-    text-align: center;
-    color: white;
+.opciones{
+    height: 100%;
+    width: 100%;
     display: block;
-    border-radius: 10px;
+    justify-self: center;
 }
