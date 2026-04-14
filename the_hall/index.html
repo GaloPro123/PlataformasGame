@@ -104,7 +104,8 @@
         // Cámara
         let cameraX = 0;
 
-        // Controles
+        // Controle
+
         window.addEventListener('keydown', e => keys[e.key] = true);
         window.addEventListener('keyup', e => keys[e.key] = false);
 
@@ -277,7 +278,7 @@
                 
                 // Redirección automática después de 2 segundos
                 redirectTimeout = setTimeout(() => {
-                    window.location.href = "index.html";   // ← Cambia esta URL si quieres
+                    window.location.href = "../";
                 }, 2000);
             }
 
